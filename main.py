@@ -9,7 +9,7 @@ from functools import update_wrapper
 #TODO: make this into a class with student model and stuff
 def compile_files(files):
     for f in files:
-        with open(f['name'], 'w') as file:
+        with open(f['/tmp/name'], 'w') as file:
             file.write(f['body'])
     process = subprocess.Popen(["g++", ' '.join([f['name'] for f in files if not f['name'].endswith('.h')]), \
     '-o temp.o', '-Wall', '-Wextra', \
