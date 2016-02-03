@@ -1,22 +1,9 @@
+from build import compile_files
 from flask import Flask
 from flask import request, make_response, current_app
 from flask import jsonify
-import subprocess
 from datetime import timedelta
 from functools import update_wrapper
-
-
-#TODO: make this into a class with student model and stuff
-def compile_files(files):
-    for f in files:
-        with open(f['/tmp/name'], 'w') as file:
-            file.write(f['body'])
-    process = subprocess.Popen(["g++", ' '.join([f['name'] for f in files if not f['name'].endswith('.h')]), \
-    '-o temp.o', '-Wall', '-Wextra', \
-    '-pedantic' , \
-    '-fdiagnostics-parseable-fixits'], stdout=subprocess.PIPE, stderr = subprocess.PIPE)
-    out, err = process.communicate()
-    return err.strip()
 
 app = Flask(__name__)
 
@@ -65,15 +52,15 @@ def set_allow_origin(resp):
         h['Access-Control-Allow-Origin'] = request.headers['Origin']
     return resp
 
-
 @app.route('/build/id/<id>', methods=['POST'])
 def build(id):
+    '''POST request for a build. id as arg and files json as body'''
     resp = jsonify({'message':'fail'})
     resp.status_code = 405
     if request.headers['Content-Type'] == 'application/json':
         if 'files' in request.json:
             err = compile_files(request.json['files'])
-            resp = jsonify({'errors': err.split('clang:')})
+            resp = jsonify({'errors': err})
             resp.status_code = 200
     print(resp)
     return resp
