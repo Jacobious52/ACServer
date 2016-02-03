@@ -1,7 +1,7 @@
 import re
 
 '''pre compiled error/warning pattern'''
-CLANG_ERROR_WARN_PATTERN = re.compile('(.*):\s(error|warning):\s(.*)')
+CLANG_ERROR_WARN_PATTERN = re.compile('(.*\d:\d):\s(error|warning):\s(.*)')
 
 def matches_error(string):
     '''return if string matches a clang warning or error format'''
