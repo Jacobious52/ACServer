@@ -3,7 +3,7 @@ import utils
 import re
 from logger import logger
 
-WRITE_LOC = '/tmp/'
+WRITE_LOC = 'builds/'
 
 BUILD_FLAGS = ['-Wall', '-Wextra', '-pedantic', '-fno-caret-diagnostics', '-fno-diagnostics-fixit-info']
 
@@ -33,7 +33,7 @@ def build_args(files):
             args.append(WRITE_LOC + f[KNAME])
 
     args.extend(BUILD_FLAGS)
-    args.append('-o /tmp/temp.o')
+    args.append('-o %stemp.o' % WRITE_LOC)
 
     logger.debug('build args:' + str(args))
 
@@ -70,8 +70,8 @@ def strip_and_split(raw_errors):
     #remove anything that's not an error for warning
     for line in lines:
         if utils.matches_error(line):
-            if line.startswith('/tmp/'):
-                line = line.replace('/tmp/', '')
+            if line.startswith(WRITE_LOC):
+                line = line.replace(WRITE_LOC, '')
             logger.debug(line)
             errors.append(line)
 
