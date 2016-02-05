@@ -42,9 +42,9 @@ def build_args(files):
             args.append(WRITE_LOC + f[KNAME])
 
     args.extend(BUILD_FLAGS)
-    args.append('-o %stemp.o' % WRITE_LOC)
+    args.append('-o %smain.o' % WRITE_LOC)
 
-    logger.debug('build args:' + str(args))
+    logger.debug('building: %s' % ' '.join(args))
 
     return args
 
@@ -60,9 +60,8 @@ def parse_for_linker(raw_errors):
 
     '''Extract different formated linker errors'''
     if 'error: linker command failed' in raw_errors:
-        logger.debug('Linker: Errors found')
-        p = re.compile(LINKER_PATTERN, raw_errors)
-        it = p.finditer(raw_errors)
+        logger.debug('Linker errors found')
+        it = utils.LINKER_PATTERN.finditer(raw_errors)
         for match in it:
             msg = match.group(0)
             errors.append('NOFILE:-1:-1: error: linker: Undefined symbols for architecture x86_64: %s' % msg)
@@ -81,7 +80,6 @@ def strip_and_split(raw_errors):
         if utils.matches(utils.CLANG_ERROR_WARN_PATTERN, line):
             if line.startswith(WRITE_LOC):
                 line = line.replace(WRITE_LOC, '')
-            logger.debug(line)
             errors.append(line)
 
     # now extract linker errors.
@@ -93,5 +91,5 @@ def compile_files(files):
     '''Compile files and return a json object of Erorrs to return to client'''
     write_files(files)
     raw_errors = build(files)
-    logger.debug('build: %s' % raw_errors)
-    return strip_and_split(raw_errors)
+    single_errors = strip_and_split(raw_errors)
+    return single_errors
