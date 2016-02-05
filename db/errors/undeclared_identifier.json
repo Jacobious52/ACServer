@@ -1,0 +1,13 @@
+{
+  "name": "Use of undeclared identifier",
+  "type": "error",
+  "catagories": ["syntax", "definitions"],
+  "regex": "use of undeclared identifier '(.*)'",
+  "resolve": [
+    {
+      "type": "resolve",
+      "message": "$0 doesn't exist. Maybe you forgot to declare it."
+    }
+  ],
+  "info": "names of variables and functions have to be defined somewhere first in c++"
+}

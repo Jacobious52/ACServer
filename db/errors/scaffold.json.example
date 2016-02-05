@@ -1,0 +1,13 @@
+{
+  "name": "Short name of the error",
+  "type": "error/warning",
+  "catagories": ["syntax", "mistake", "linker", "etc"],
+  "regex": "regex expression with captures (.*) for vars",
+  "resolve": [
+    {
+      "type": "resolve",
+      "message": "use $0, $1, etc to use the captures from the regex in order"
+    }
+  ],
+  "info": "Some info about the error"
+}

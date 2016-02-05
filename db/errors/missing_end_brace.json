@@ -1,0 +1,13 @@
+{
+  "name": "Missing end brace",
+  "type": "error",
+  "catagories": ["syntax", "mistake"],
+  "regex": "expected '}'",
+  "resolve": [
+    {
+      "type": "resolve",
+      "message": "You forgot a ending brace $0"
+    }
+  ],
+  "info": "In C++ functions need to end with }"
+}
