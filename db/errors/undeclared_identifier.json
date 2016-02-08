@@ -1,13 +1,59 @@
 {
-  "name": "Use of undeclared identifier",
+  "name": "Undeclared identifier",
   "type": "error",
-  "catagories": ["syntax", "definitions"],
+  "catagories": ["semantics", "definitions"],
   "regex": "use of undeclared identifier '(.*)'",
+  "info": "Names of variables and functions have to be defined somewhere first in C++. Undeclared identifer means that the variable or name you are trying to use cannot be found be the compiler.",
   "resolve": [
-    {
-      "type": "resolve",
-      "message": "$0 doesn't exist. Maybe you forgot to declare it."
-    }
-  ],
-  "info": "names of variables and functions have to be defined somewhere first in c++"
+      {
+          "type": "question",
+          "id": "0",
+          "message": "$0 doesn't exist in the current contex. Did you forget to define $0 before you try to use it?",
+          "options":
+          [
+              {
+                  "message": "Yes",
+                  "segue": "forgot"
+              },
+              {
+                  "message": "No. I have defined $0",
+                  "segue": "check_includes"
+              },
+              {
+                  "message":  "No. It is a standard library type",
+                  "segue": "check_includes_std"
+              }
+          ]
+      },
+      {
+          "type": "statement",
+          "id": "forgot",
+          "message": "Define $0 before using the identifer then try compile again"
+      },
+      {
+          "type": "statement",
+          "id": "check_includes_std",
+          "message": "For almost all standard library types, like std::string, you need to #include the appropriate headers. It is common to forget the 'std::' at the front."
+      },
+      {
+          "type": "question",
+          "id": "check_includes",
+          "message": "If you are certain that you have declared $0. Have you included the header where $0 exists?",
+          "options":
+          [
+              {
+                  "message": "Yes",
+                  "segue": "check"
+              },
+              {
+                  "message": "No. I forgot to include the header where I have defined $0",
+                  "segue": "done"
+              }
+          ]
+      },
+      {
+          "type": "statement",
+          "message": "Include the missing header and compile again"
+      }
+  ]
 }

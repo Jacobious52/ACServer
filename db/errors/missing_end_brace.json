@@ -1,13 +1,14 @@
 {
-  "name": "Missing end brace",
+  "name": "Missing closing brace",
   "type": "error",
   "catagories": ["syntax", "mistake"],
   "regex": "expected '}'",
   "resolve": [
     {
-      "type": "resolve",
-      "message": "You forgot a ending brace $0"
+      "type": "statement",
+      "id": "0",
+      "message": "You forgot a closing brace at the end of a body declaration. Make sure that control statements and functions all have matching braces"
     }
   ],
-  "info": "In C++ functions need to end with }"
+  "info": "In C++, functions and control statement need to end with a }"
 }

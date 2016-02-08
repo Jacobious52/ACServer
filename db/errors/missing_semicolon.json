@@ -1,13 +1,14 @@
 {
-  "name": "Missing semi colon",
+  "name": "Missing semicolon",
   "type": "error",
   "catagories": ["syntax", "mistake"],
   "regex": "expected ';' (.*)",
   "resolve": [
     {
-      "type": "resolve",
-      "message": "You forgot a semicolon $0"
+      "type": "statement",
+      "id": "0",
+      "message": "You forgot a semicolon '$0'. You should go back and check that you haven't missed any semicolons"
     }
   ],
-  "info": "In C++ statements need to end with ;"
+  "info": "In C++, statements need to end with ;"
 }
