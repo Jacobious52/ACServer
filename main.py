@@ -1,4 +1,5 @@
 from build import compile_files
+import problem
 from flask import Flask
 from flask import request, make_response, current_app
 from flask import jsonify
@@ -62,7 +63,13 @@ def build(id):
             err = compile_files(request.json['files'])
             resp = jsonify({'errors': err})
             resp.status_code = 200
-    print(resp)
+    return resp
+
+@app.route('/problems', methods=['GET'])
+def problems():
+    '''GET request for problems set'''
+    resp = jsonify({'problems': problem.load_all()})
+    resp.status_code = 200
     return resp
 
 if __name__ == '__main__':

@@ -1,7 +1,7 @@
 {
   "name": "Missing semicolon",
   "type": "error",
-  "catagories": ["syntax", "mistake"],
+  "categories": ["syntax", "mistake"],
   "regex": "expected ';' (.*)",
   "resolve": [
     {

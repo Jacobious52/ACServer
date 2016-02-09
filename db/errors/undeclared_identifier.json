@@ -1,7 +1,7 @@
 {
   "name": "Undeclared identifier",
   "type": "error",
-  "catagories": ["semantics", "definitions"],
+  "categories": ["semantics", "definitions"],
   "regex": "use of undeclared identifier '(.*)'",
   "info": "Names of variables and functions have to be defined somewhere first in C++. Undeclared identifer means that the variable or name you are trying to use cannot be found be the compiler.",
   "resolve": [

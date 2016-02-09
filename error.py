@@ -120,10 +120,10 @@ class Error:
         else:
             logger.error('no "type" key in json %s' % file_name)
 
-        if 'catagories' in jdict:
-            self.catagory = jdict['catagories']
+        if 'categories' in jdict:
+            self.catagory = jdict['categories']
         else:
-            logger.error('no "catagories" key in json %s' % file_name)
+            logger.error('no "categories" key in json %s' % file_name)
 
         if 'regex' in jdict:
             self.regex = jdict['regex']

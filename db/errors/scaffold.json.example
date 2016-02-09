@@ -1,13 +1,29 @@
 {
   "name": "Short name of the error",
   "type": "error/warning",
-  "catagories": ["syntax", "mistake", "linker", "etc"],
-  "regex": "regex expression with captures (.*) for vars",
+  "categories": ["syntax", "mistake", "linker", "etc"],
+  "regex": "regex expression with captures (.*) for vars. this will match the error message to this error",
+  "info": "General information about the error",
   "resolve": [
     {
-      "type": "resolve",
-      "message": "use $0, $1, etc to use the captures from the regex in order"
+      "type": "question",
+      "id": "id that answers can use to segue to",
+      "message": "This question can use variables to capture context information from the regex with $0, $1 , etc",
+      "options": [
+        {
+          "message": "message for this option. e.g. Do you understand how to use json now?",
+          "segue": "id to goto after user selects this option"
+        },
+        {
+          "message": "...",
+          "segue": "..."
+        }
+      ]
+    },
+    {
+      "type": "statement",
+      "id": "id for an answer to reference",
+      "message": "a statement is the same as an answer but has no questions. indicates the end of questioning."
     }
-  ],
-  "info": "Some info about the error"
+  ]
 }

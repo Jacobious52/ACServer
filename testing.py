@@ -1,6 +1,7 @@
 import error
 import pprint
 import logger
+import problem
 
 test_errors = [
     "main.cpp:4:7: error: expected ';' at end of declaration",
@@ -15,7 +16,7 @@ def main():
 
     errors = error.load_errors()
     pp = pprint.PrettyPrinter(indent=4)
-
+    '''
     for test in test_errors:
         pp.pprint('trying to match: %s' % test)
         for err in errors:
@@ -23,6 +24,11 @@ def main():
             if e is not None:
                 pp.pprint('match found!')
                 pp.pprint(e)
+
+    print '\n'
+    '''
+
+    pp.pprint(problem.load_all())
 
 if __name__ == '__main__':
     main()
