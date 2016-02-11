@@ -1,0 +1,59 @@
+{
+  "name": "init with wrong type",
+  "type": "error",
+  "categories": ["semantics", "types"],
+  "regex": "cannot initialize a variable of type '(.*)' with an lvalue of type '(.*)'",
+  "info": "You have tried to initialise a variable of type $0 with a $1. These types cannot be implicitly converted to each other.",
+  "resolve": [
+      {
+          "type": "question",
+          "id": "0",
+          "message": "",
+          "options":
+          [
+              {
+                  "message": "Yes",
+                  "segue": "forgot"
+              },
+              {
+                  "message": "No. I have defined $0",
+                  "segue": "check_includes"
+              },
+              {
+                  "message":  "No. It is a standard library type",
+                  "segue": "check_includes_std"
+              }
+          ]
+      },
+      {
+          "type": "statement",
+          "id": "forgot",
+          "message": "Define $0 before using the identifer then try compile again"
+      },
+      {
+          "type": "statement",
+          "id": "check_includes_std",
+          "message": "For almost all standard library types, like std::string, you need to #include the appropriate headers. It is common to forget the 'std::' at the front."
+      },
+      {
+          "type": "question",
+          "id": "check_includes",
+          "message": "If you are certain that you have declared $0. Have you included the header where $0 exists?",
+          "options":
+          [
+              {
+                  "message": "Yes",
+                  "segue": "check"
+              },
+              {
+                  "message": "No. I forgot to include the header where I have defined $0",
+                  "segue": "done"
+              }
+          ]
+      },
+      {
+          "type": "statement",
+          "message": "Include the missing header and compile again"
+      }
+  ]
+}
