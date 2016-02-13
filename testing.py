@@ -2,6 +2,8 @@ import error
 import pprint
 import logger
 import problem
+import utils
+from student import Student
 
 test_errors = [
     "main.cpp:4:7: error: expected ';' at end of declaration",
@@ -11,12 +13,16 @@ test_errors = [
     "main.cpp:3:4: error: unmatchable error"
 ]
 
-def main():
-    logger.level = 1
+def student(pp):
+    s = Student('a1687803')
+    pp.pprint(s.dict)
 
+def problems(pp):
+    pp.pprint(problem.load_all())
+    pp.pprint(problem.load('question1'))
+
+def errors(pp):
     errors = error.load_errors()
-    pp = pprint.PrettyPrinter(indent=4)
-    '''
     for test in test_errors:
         pp.pprint('trying to match: %s' % test)
         for err in errors:
@@ -26,9 +32,12 @@ def main():
                 pp.pprint(e)
 
     print '\n'
-    '''
 
-    pp.pprint(problem.load_all())
+def main():
+    logger.level = 1
+    pp = pprint.PrettyPrinter(indent=4)
+
+    student(pp)
 
 if __name__ == '__main__':
     main()

@@ -1,6 +1,16 @@
 import glob
 import os
 
+def load(directory):
+    files = []
+    for name in glob.glob('db/problems/%s/*' % directory):
+        file_object = {'name': os.path.basename(name)}
+        with open(name, 'r') as f:
+            file_object['body'] = f.read()
+        files.append(file_object)
+    prob = {'name': directory, 'files': files}
+    return prob
+
 def load_all():
     '''load all problems from problems folder'''
     problems = []

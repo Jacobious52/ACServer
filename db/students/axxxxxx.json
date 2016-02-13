@@ -1,0 +1,29 @@
+{
+  "id": "axxxxxxx",
+  "created": "timestamp",
+  "actions": [
+    {
+      "action": "login",
+      "timestamp": "23456789",
+    },
+    {
+      "action": "loadedprobs",
+      "timestamp": "23585678"
+    },
+    {
+      "action": "build",
+      "timestamp": "23456789",
+      "problem": "question1",
+      "total_min_edit_dist": 45,
+      "new_files": [
+        {
+          "name": "main.cpp",
+          "body": "asdfghjk",
+          "min_edit_dist": 4
+        }
+      ],
+      "errors": ["","",""]
+    }
+  ],
+  "prev_errors_hashes": ["ASDFGY64ERTYU8765", "ASDTY643ERTY7"]
+}

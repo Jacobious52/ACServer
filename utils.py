@@ -1,4 +1,12 @@
 import re
+import time
+import os.path
+
+def fexists(path):
+    return os.path.isfile(path)
+
+def timestamp():
+    return int(time.time())
 
 '''pre compiled error/warning patterns'''
 CLANG_ERROR_WARN_PATTERN = re.compile('(.*[\d:\d]):\s(error|warning):\s(.*)')
