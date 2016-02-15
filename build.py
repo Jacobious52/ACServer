@@ -23,25 +23,29 @@ Files format:
 def write_files(files):
     '''Write files to temp location for compilation'''
 
-    #delete old files
+    # delete old files
     old_files = glob.glob('%s*' % WRITE_LOC)
     for f in old_files:
         os.remove(f)
 
-    # write new files
+    # write new files sent from the client so we can build them later
     for f in files:
         with open(WRITE_LOC + f[KNAME], 'w') as file:
             file.write(f[KBODY])
 
 def build_args(files):
-    '''Create the arg list for g++ subprocess'''
-    args = ['g++']
+    '''Create the arg list for clang++ subprocess'''
+    # compiler
+    args = ['clang++']
 
+    # source files
     for f in files:
         if f[KNAME].endswith('.cpp'):
             args.append(WRITE_LOC + f[KNAME])
 
+    # clang flags
     args.extend(BUILD_FLAGS)
+    # out object file
     args.append('-o %smain.o' % WRITE_LOC)
 
     logger.debug('building: %s' % ' '.join(args))
@@ -56,9 +60,9 @@ def build(files):
     return err.strip()
 
 def parse_for_linker(raw_errors):
+    '''Extract different formated linker errors from the compiler'''
     errors = []
 
-    '''Extract different formated linker errors'''
     if 'error: linker command failed' in raw_errors:
         logger.debug('Linker errors found')
         it = utils.LINKER_PATTERN.finditer(raw_errors)
@@ -75,7 +79,7 @@ def strip_and_split(raw_errors):
     errors = []
 
     # collect all standard sytax errors
-    # remove anything that's not an error for warning
+    # remove anything that's not an error or warning
     for line in lines:
         if utils.matches(utils.CLANG_ERROR_WARN_PATTERN, line):
             if line.startswith(WRITE_LOC):
@@ -88,7 +92,7 @@ def strip_and_split(raw_errors):
     return errors
 
 def compile_files(files):
-    '''Compile files and return a json object of Erorrs to return to client'''
+    '''Compile files and return a json object of Errors to return to client'''
     write_files(files)
     raw_errors = build(files)
     single_errors = strip_and_split(raw_errors)
