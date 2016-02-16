@@ -17,6 +17,9 @@ def student(pp):
     s = Student('a1687803')
     pp.pprint(s.dict)
 
+    s.create_action_build(problem.PROBLEMS[0]['name'], problem.PROBLEMS[0]['files'], test_errors)
+    s.sync()
+
 def problems(pp):
     pp.pprint(problem.load_all())
     pp.pprint(problem.load('question1'))

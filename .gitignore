@@ -1,4 +1,5 @@
 builds/
+db/students/*
 *.pyc
 
 *.o

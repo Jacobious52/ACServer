@@ -26,3 +26,7 @@ def load_all():
         prob = {'name': os.path.basename(d), 'files': files}
         problems.append(prob)
     return problems
+
+
+PROBLEMS = sorted(load_all(), key=lambda k: k['name'])
+'''pre loaded and sorted problems instead of loading every call'''

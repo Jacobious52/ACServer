@@ -68,14 +68,27 @@ def build(id):
     if request.headers['Content-Type'] == 'application/json':
         if 'files' in request.json:
             err = compile_files(request.json['files'])
+
+            # log to student model
+            s = Student(id)
+            s.create_action_build(request.json['problem'], request.json['files'], err)
+            s.sync()
+
             resp = jsonify({'errors': err})
             resp.status_code = 200
     return resp
 
-@app.route('/problems', methods=['GET'])
-def problems():
+@app.route('/problems/id/<id>', methods=['GET'])
+def problems(id):
     '''GET request for problems set'''
-    resp = jsonify({'problems': problem.load_all()})
+
+    # log to student model
+    s = Student(id)
+    s.create_action_refresh_problems()
+    s.sync()
+
+    # return problems back to client
+    resp = jsonify({'problems': problem.PROBLEMS})
     resp.status_code = 200
     return resp
 
