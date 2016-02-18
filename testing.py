@@ -40,7 +40,8 @@ def main():
     logger.level = 1
     pp = pprint.PrettyPrinter(indent=4)
 
-    student(pp)
+    #student(pp)
+    print utils.edit_dist('cat', 'cars')
 
 if __name__ == '__main__':
     main()

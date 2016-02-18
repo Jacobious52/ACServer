@@ -1,5 +1,7 @@
 import json
 import utils
+import problem
+from logger import logger
 
 STUDENTS_LOC = 'db/students/'
 
@@ -16,15 +18,24 @@ class Student:
         # load the previous or newly created
         self.load()
 
-    def create_action_build(self, problem, files, errors):
-        for f in files:
-            f['edit_dist'] = 0
+    def create_action_build(self, problem_key, files, errors):
+        total_edit_dist = 0
+
+        p = problem.find(problem.PROBLEMS, problem_key)
+        if p is not None:
+            # loop through both sources of files and get edit dist
+            for edited, original in zip(files, p['files']):
+                ed = utils.edit_dist(original['body'], edited['body'])
+                total_edit_dist += ed
+                edited['edit_dist'] = ed
+        else:
+            logger.error('could not find problem: %s' % problem_key)
 
         self.dict['actions'].append({
             'action': 'build',
             'timestamp': utils.timestamp(),
-            'problem_id': problem,
-            'total_edit_dist': 0,
+            'problem_id': problem_key,
+            'total_edit_dist': total_edit_dist,
             'files': files,
             'errors': errors
         })
@@ -46,6 +57,13 @@ class Student:
             'action': 'refresh_problems',
             'timestamp': utils.timestamp()
             })
+
+    def create_action_question(self, question):
+        self.dict['actions'].append({
+            'action': 'changed_question',
+            'timestamp': utils.timestamp(),
+            'to': question
+        })
 
     def fpath(self):
         return '%s%s.json' % (STUDENTS_LOC, self.id)

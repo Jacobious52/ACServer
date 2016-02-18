@@ -1,5 +1,6 @@
 builds/
-db/students/*
 *.pyc
 
 *.o
+
+db/students/*.json

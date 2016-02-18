@@ -6,6 +6,7 @@ from flask import jsonify
 from datetime import timedelta
 from functools import update_wrapper
 from student import Student
+from multiprocessing import cpu_count
 
 app = Flask(__name__)
 
@@ -22,7 +23,9 @@ def not_found(error=None):
 
 @app.route('/')
 def index():
-    return "It's Working!"
+    resp = jsonify({"status": "It's Working!"})
+    resp.status_code = 200
+    return resp
 
 @app.before_request
 def option_autoreply():
@@ -92,5 +95,47 @@ def problems(id):
     resp.status_code = 200
     return resp
 
+@app.route('/login/id/<id>', methods=['GET'])
+def login(id):
+    '''GET request for login. currently used just for logging'''
+
+    # log to student model
+    s = Student(id)
+    s.create_action_login()
+    s.sync()
+
+    # return problems back to client
+    resp = jsonify({'status': 'ok'})
+    resp.status_code = 200
+    return resp
+
+@app.route('/logout/id/<id>', methods=['GET'])
+def logout(id):
+    '''GET request for logout. currently used just for logging'''
+
+    # log to student model
+    s = Student(id)
+    s.create_action_logout()
+    s.sync()
+
+    # return problems back to client
+    resp = jsonify({'status': 'ok'})
+    resp.status_code = 200
+    return resp
+
+@app.route('/question/id/<id>/q/<q>', methods=['GET'])
+def question(id, q):
+    '''GET request for change question. just used for logging'''
+
+    # log to student model
+    s = Student(id)
+    s.create_action_question(q)
+    s.sync()
+
+    # return problems back to client
+    resp = jsonify({'status': 'ok'})
+    resp.status_code = 200
+    return resp
+
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', debug=True)
+    app.run(host='0.0.0.0', debug=False, processes=cpu_count())
