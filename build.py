@@ -22,10 +22,10 @@ Files format:
 
 def write_files(files):
     '''Write files to temp location for compilation'''
+    #TODO: create different directories for each build. because of threadedness
 
     # delete old files
-    old_files = glob.glob('%s*' % WRITE_LOC)
-    for f in old_files:
+    for f in glob.glob('%s*' % WRITE_LOC):
         os.remove(f)
 
     # write new files sent from the client so we can build them later

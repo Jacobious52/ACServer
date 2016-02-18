@@ -1,9 +1,20 @@
+import os
 import json
+import glob
 import utils
 import problem
 from logger import logger
 
 STUDENTS_LOC = 'db/students/'
+
+def list_all():
+    '''list all the students who have a record'''
+    students = []
+    for f in glob.glob('%s*' % STUDENTS_LOC):
+        # remove the path and extension
+        students.append(os.path.basename(f)[0:-5])
+    print students
+    return students
 
 class Student:
     '''class to manipulate a student model dictionary'''

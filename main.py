@@ -5,6 +5,7 @@ from flask import request, make_response, current_app
 from flask import jsonify
 from datetime import timedelta
 from functools import update_wrapper
+import student
 from student import Student
 from multiprocessing import cpu_count
 
@@ -29,6 +30,7 @@ def index():
 
 @app.before_request
 def option_autoreply():
+    '''this allows Cross Site Requests'''
     if request.method == 'OPTIONS':
         resp = app.make_default_options_response()
 
@@ -51,6 +53,7 @@ def option_autoreply():
 
 @app.after_request
 def set_allow_origin(resp):
+    '''this allows Cross Site Requests'''
     h = resp.headers
     # Allow crossdomain for other HTTP Verbs
     if request.method != 'OPTIONS' and 'Origin' in request.headers:
@@ -60,6 +63,12 @@ def set_allow_origin(resp):
 @app.route('/user/id/<id>', methods=['GET'])
 def user(id):
     resp = jsonify(Student(id).dict)
+    resp.status_code = 200
+    return resp
+
+@app.route('/users', methods=['GET'])
+def users():
+    resp = jsonify({'users': student.list_all()})
     resp.status_code = 200
     return resp
 
@@ -138,4 +147,4 @@ def question(id, q):
     return resp
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', debug=False, processes=cpu_count())
+    app.run(host='0.0.0.0', debug=True, processes=cpu_count())
