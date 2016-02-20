@@ -30,8 +30,9 @@ def write_files(files):
 
     # write new files sent from the client so we can build them later
     for f in files:
-        with open(WRITE_LOC + f[KNAME], 'w') as file:
-            file.write(f[KBODY])
+        if utils.sanitize_fname(f[KNAME]):
+            with open(WRITE_LOC + f[KNAME], 'w') as file:
+                file.write(f[KBODY])
 
 def build_args(files):
     '''Create the arg list for clang++ subprocess'''

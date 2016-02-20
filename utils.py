@@ -1,9 +1,33 @@
 import re
 import time
 import os.path
+import hashlib
+
+'''pre compiled error/warning patterns'''
+ID_PATTERN = re.compile('a\d{7}')
+FILE_PATTERN = re.compile('[\w]+.(cpp|h)')
+CLANG_ERROR_WARN_PATTERN = re.compile('(.*[\d:\d]):\s(error|warning):\s(.*)')
+LOCATION_PATTERN = re.compile('(.*\..*):(\d+):(\d+)')
+LINKER_PATTERN = re.compile('"(.*)",\sreferenced from:\s(.*)')
+
+def sanitize_id(id):
+    ''' determines if the id is in the correct format '''
+    return matches(ID_PATTERN, id) and len(id) == 8
+
+def sanitize_fname(fname):
+    return matches(FILE_PATTERN, fname)
+
+def encode_error(error, total_edit_dist):
+    '''
+    encode the hash with the edit distance
+    format:  editdist::hash
+    example: 18::5ffe2624f389d63bd81368029e59cba6
+    '''
+    h = hashlib.md5(error.encode()).hexdigest()
+    h = str(total_edit_dist) + '::' + h
 
 def print_table(table):
-    '''prints a 2d array in matri format'''
+    '''prints a 2d array in matrix format'''
     for row in table:
         print row
     print ''
@@ -50,12 +74,6 @@ def fexists(path):
 
 def timestamp():
     return int(time.time())
-
-'''pre compiled error/warning patterns'''
-CLANG_ERROR_WARN_PATTERN = re.compile('(.*[\d:\d]):\s(error|warning):\s(.*)')
-LOCATION_PATTERN = re.compile('(.*\..*):(\d+):(\d+)')
-LINKER_PATTERN = re.compile('"(.*)",\sreferenced from:\s(.*)')
-
 
 def capture_matches(pattern, string):
     '''matches against a pre compiled pattern'''

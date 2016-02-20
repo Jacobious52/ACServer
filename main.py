@@ -1,11 +1,9 @@
 from build import compile_files
 import problem
-from flask import Flask
-from flask import request, make_response, current_app
-from flask import jsonify
+import utils
+from flask import Flask, request, make_response, current_app, jsonify
 from datetime import timedelta
 from functools import update_wrapper
-import student
 from student import Student
 from multiprocessing import cpu_count
 
@@ -62,8 +60,14 @@ def set_allow_origin(resp):
 
 @app.route('/user/id/<id>', methods=['GET'])
 def user(id):
-    resp = jsonify(Student(id).dict)
-    resp.status_code = 200
+    ''' return a user model for id, if valid user '''
+    if utils.sanitize_id(id):
+        resp = jsonify(Student(id).dict)
+        resp.status_code = 200
+        return resp
+
+    resp = jsonify({'error': 'invalid id'})
+    resp.status_code = 405
     return resp
 
 @app.route('/users', methods=['GET'])
@@ -75,9 +79,9 @@ def users():
 @app.route('/build/id/<id>', methods=['POST'])
 def build(id):
     '''POST request for a build. id as arg and files json as body'''
-    resp = jsonify({'message':'fail'})
+    resp = jsonify({'status':'invalid id or non json body'})
     resp.status_code = 405
-    if request.headers['Content-Type'] == 'application/json':
+    if request.headers['Content-Type'] == 'application/json' and utils.sanitize_id(id):
         if 'files' in request.json:
             err = compile_files(request.json['files'])
 
@@ -94,57 +98,79 @@ def build(id):
 def problems(id):
     '''GET request for problems set'''
 
-    # log to student model
-    s = Student(id)
-    s.create_action_refresh_problems()
-    s.sync()
+    if utils.sanitize_id(id):
+        # log to student model
+        s = Student(id)
+        s.create_action_refresh_problems()
+        s.sync()
 
-    # return problems back to client
-    resp = jsonify({'problems': problem.PROBLEMS})
-    resp.status_code = 200
+        # return problems back to client
+        resp = jsonify({'problems': problem.PROBLEMS})
+        resp.status_code = 200
+        return resp
+
+    resp = jsonify({'error': 'invalid id'})
+    resp.status_code = 405
     return resp
 
 @app.route('/login/id/<id>', methods=['GET'])
 def login(id):
     '''GET request for login. currently used just for logging'''
 
-    # log to student model
-    s = Student(id)
-    s.create_action_login()
-    s.sync()
+    if utils.sanitize_id(id):
+        # log to student model
+        s = Student(id)
+        s.create_action_login()
+        s.sync()
 
-    # return problems back to client
-    resp = jsonify({'status': 'ok'})
-    resp.status_code = 200
+        # return problems back to client
+        resp = jsonify({'status': 'ok'})
+        resp.status_code = 200
+        return resp
+
+    resp = jsonify({'error': 'invalid id'})
+    resp.status_code = 405
     return resp
 
 @app.route('/logout/id/<id>', methods=['GET'])
 def logout(id):
     '''GET request for logout. currently used just for logging'''
 
-    # log to student model
-    s = Student(id)
-    s.create_action_logout()
-    s.sync()
+    if utils.sanitize_id(id):
+        # log to student model
+        s = Student(id)
+        s.create_action_logout()
+        s.sync()
 
-    # return problems back to client
-    resp = jsonify({'status': 'ok'})
-    resp.status_code = 200
+        # return problems back to client
+        resp = jsonify({'status': 'ok'})
+        resp.status_code = 200
+        return resp
+
+    resp = jsonify({'error': 'invalid id'})
+    resp.status_code = 405
     return resp
+
 
 @app.route('/question/id/<id>/q/<q>', methods=['GET'])
 def question(id, q):
     '''GET request for change question. just used for logging'''
 
-    # log to student model
-    s = Student(id)
-    s.create_action_question(q)
-    s.sync()
+    if utils.sanitize_id(id):
+        # log to student model
+        s = Student(id)
+        s.create_action_question(q)
+        s.sync()
 
-    # return problems back to client
-    resp = jsonify({'status': 'ok'})
-    resp.status_code = 200
+        # return problems back to client
+        resp = jsonify({'status': 'ok'})
+        resp.status_code = 200
+        return resp
+
+    resp = jsonify({'error': 'invalid id'})
+    resp.status_code = 405
     return resp
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True, processes=cpu_count())

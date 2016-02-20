@@ -29,18 +29,33 @@ class Student:
         # load the previous or newly created
         self.load()
 
+    def process_error_hashes(self, errors, total_edit_dist):
+        ''' add unique hashes of the errors for use with scoring the users next inputs. '''
+        for error in errors:
+            h = utils.encode_error(error, total_edit_dist)
+
+            # we don't want to add hashes the user has entered before. so they can't cheat
+            if h not in self.dict['hashes']:
+                self.dict['hashes'].append(h)
+            print h
+
     def create_action_build(self, problem_key, files, errors):
+        ''' create an build action for this user'''
         total_edit_dist = 0
 
+        # get the original files for the selected problem
         p = problem.find(problem.PROBLEMS, problem_key)
         if p is not None:
-            # loop through both sources of files and get edit dist
+            # loop through both sources of files simultaneously
+            # get edit dist and total_edit_dist across all files for this build
             for edited, original in zip(files, p['files']):
                 ed = utils.edit_dist(original['body'], edited['body'])
                 total_edit_dist += ed
                 edited['edit_dist'] = ed
         else:
             logger.error('could not find problem: %s' % problem_key)
+
+        self.process_error_hashes(errors, total_edit_dist)
 
         self.dict['actions'].append({
             'action': 'build',
@@ -92,7 +107,8 @@ class Student:
         student = {
             'id': self.id,
             'created': utils.timestamp(),
-            'actions': []
+            'actions': [],
+            'hashes': []
             }
 
         with open(self.fpath(), 'w') as f:
