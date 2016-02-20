@@ -26,11 +26,6 @@ def encode_error(error, total_edit_dist):
     h = hashlib.md5(error.encode()).hexdigest()
     h = str(total_edit_dist) + '::' + h
 
-def print_table(table):
-    '''prints a 2d array in matrix format'''
-    for row in table:
-        print row
-    print ''
 
 def edit_dist(s1, s2):
     '''calc the minimum edit distance between s1 and s2'''
