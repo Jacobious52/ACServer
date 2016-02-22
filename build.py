@@ -4,6 +4,8 @@ import re
 from logger import logger
 import os
 import glob
+import problem
+from student import Student
 
 WRITE_LOC = 'builds/'
 
@@ -73,7 +75,6 @@ def parse_for_linker(raw_errors):
 
     return errors
 
-
 def strip_and_split(raw_errors):
     '''Split the block text of errors into single lines without other mess'''
     lines = raw_errors.split('\n')
@@ -92,9 +93,39 @@ def strip_and_split(raw_errors):
 
     return errors
 
-def compile_files(files):
-    '''Compile files and return a json object of Errors to return to client'''
+def compile_files(files, id, problem_key):
+    '''Compile files and return a json object of errors, edit dist and score to return to client'''
     write_files(files)
     raw_errors = build(files)
-    single_errors = strip_and_split(raw_errors)
-    return single_errors
+    errors = strip_and_split(raw_errors)
+
+    # determine the edit distance (score) for each error
+    # and check to see if the student has already had that error
+    score = 0
+    total_file_len = 0
+    total_edit_dist = 0
+
+    # get the original files for the selected problem
+    p = problem.find(problem.PROBLEMS, problem_key)
+    if p is not None:
+        # loop through both sources of files simultaneously
+        # add to the total_edit_dist across all files for this build
+        for edited, original in zip(files, p['files']):
+            ed = utils.edit_dist(original['body'], edited['body'])
+            total_edit_dist += ed
+            total_file_len = len(original['body'])
+    else:
+        logger.error('could not find problem: %s' % problem_key)
+
+    # list for dictionary of errors. including if the error has already seen that error
+    errors_dicts = []
+
+    # compare these errors against students previous errors
+    for error in errors:
+        if utils.encode_error(error, total_edit_dist) not in Student(id).dict['hashes']:
+            score += (total_file_len - total_edit_dist)
+            errors_dicts.append({'body': error, 'seen': False})
+        else:
+            errors_dicts.append({'body': error, 'seen': True})
+
+    return (errors_dicts, total_edit_dist, score)

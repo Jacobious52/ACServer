@@ -24,8 +24,7 @@ def encode_error(error, total_edit_dist):
     example: 18::5ffe2624f389d63bd81368029e59cba6
     '''
     h = hashlib.md5(error.encode()).hexdigest()
-    h = str(total_edit_dist) + '::' + h
-
+    return '%d::%s' % (total_edit_dist, h)
 
 def edit_dist(s1, s2):
     '''calc the minimum edit distance between s1 and s2'''

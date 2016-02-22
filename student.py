@@ -33,11 +33,11 @@ class Student:
         ''' add unique hashes of the errors for use with scoring the users next inputs. '''
         for error in errors:
             h = utils.encode_error(error, total_edit_dist)
+            print 'hash ' + str(h)
 
             # we don't want to add hashes the user has entered before. so they can't cheat
             if h not in self.dict['hashes']:
                 self.dict['hashes'].append(h)
-            print h
 
     def create_action_build(self, problem_key, files, errors):
         ''' create an build action for this user'''

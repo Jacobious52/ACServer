@@ -83,14 +83,14 @@ def build(id):
     resp.status_code = 405
     if request.headers['Content-Type'] == 'application/json' and utils.sanitize_id(id):
         if 'files' in request.json:
-            err = compile_files(request.json['files'])
+            errors, edit_dist, score = compile_files(request.json['files'], id, request.json['problem'])
 
             # log to student model
             s = Student(id)
-            s.create_action_build(request.json['problem'], request.json['files'], err)
+            s.create_action_build(request.json['problem'], request.json['files'], [e['body'] for e in errors])
             s.sync()
 
-            resp = jsonify({'errors': err})
+            resp = jsonify({'errors': errors, 'edit_dist': edit_dist, 'score': score})
             resp.status_code = 200
     return resp
 
@@ -170,7 +170,6 @@ def question(id, q):
     resp = jsonify({'error': 'invalid id'})
     resp.status_code = 405
     return resp
-
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True, processes=cpu_count())
