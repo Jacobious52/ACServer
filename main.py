@@ -4,8 +4,10 @@ import utils
 from flask import Flask, request, make_response, current_app, jsonify
 from datetime import timedelta
 from functools import update_wrapper
+import student
 from student import Student
 from multiprocessing import cpu_count
+import os
 
 app = Flask(__name__)
 
@@ -23,6 +25,12 @@ def not_found(error=None):
 @app.route('/')
 def index():
     resp = jsonify({"status": "It's Working!"})
+    resp.status_code = 200
+    return resp
+
+@app.route('/api/')
+def api():
+    resp = jsonify({"status": "Ready!"})
     resp.status_code = 200
     return resp
 
@@ -58,7 +66,7 @@ def set_allow_origin(resp):
         h['Access-Control-Allow-Origin'] = request.headers['Origin']
     return resp
 
-@app.route('/user/id/<id>', methods=['GET'])
+@app.route('/api/user/id/<id>', methods=['GET'])
 def user(id):
     ''' return a user model for id, if valid user '''
     if utils.sanitize_id(id):
@@ -68,15 +76,16 @@ def user(id):
 
     resp = jsonify({'error': 'invalid id'})
     resp.status_code = 405
+    print 'user id not sanitized'
     return resp
 
-@app.route('/users', methods=['GET'])
+@app.route('/api/users', methods=['GET'])
 def users():
     resp = jsonify({'users': student.list_all()})
     resp.status_code = 200
     return resp
 
-@app.route('/build/id/<id>', methods=['POST'])
+@app.route('/api/build/id/<id>', methods=['POST'])
 def build(id):
     '''POST request for a build. id as arg and files json as body'''
     resp = jsonify({'status':'invalid id or non json body'})
@@ -94,7 +103,7 @@ def build(id):
             resp.status_code = 200
     return resp
 
-@app.route('/problems/id/<id>', methods=['GET'])
+@app.route('/api/problems/id/<id>', methods=['GET'])
 def problems(id):
     '''GET request for problems set'''
 
@@ -113,7 +122,7 @@ def problems(id):
     resp.status_code = 405
     return resp
 
-@app.route('/login/id/<id>', methods=['GET'])
+@app.route('/api/login/id/<id>', methods=['GET'])
 def login(id):
     '''GET request for login. currently used just for logging'''
 
@@ -132,7 +141,7 @@ def login(id):
     resp.status_code = 405
     return resp
 
-@app.route('/logout/id/<id>', methods=['GET'])
+@app.route('/api/logout/id/<id>', methods=['GET'])
 def logout(id):
     '''GET request for logout. currently used just for logging'''
 
@@ -152,7 +161,22 @@ def logout(id):
     return resp
 
 
-@app.route('/question/id/<id>/q/<q>', methods=['GET'])
+@app.route('/api/user/id/<id>/delete/key/<key>', methods=['GET'])
+def remove(id, key):
+    ''' Remove a student from the db. Needs passkey to perform '''
+
+    if utils.sanitize_id(id) and key == 'SKELETON_KEY':
+        if utils.fexists('db/students/%s.json' % id):
+            os.remove('db/students/%s.json' % id)
+            resp = jsonify({'status': 'removed user', 'user': id})
+            resp.status_code = 200
+            return resp
+
+    resp = jsonify({'error': 'invalid id and/or security key'})
+    resp.status_code = 403
+    return resp
+
+@app.route('/api/question/id/<id>/q/<q>', methods=['GET'])
 def question(id, q):
     '''GET request for change question. just used for logging'''
 

@@ -29,6 +29,9 @@ class Student:
         # load the previous or newly created
         self.load()
 
+    def modify_score(self, score_modifier):
+        self.dict['score'] += score_modifier
+
     def process_error_hashes(self, errors, total_edit_dist):
         ''' add unique hashes of the errors for use with scoring the users next inputs. '''
         for error in errors:
@@ -108,7 +111,8 @@ class Student:
             'id': self.id,
             'created': utils.timestamp(),
             'actions': [],
-            'hashes': []
+            'hashes': [],
+            'score': 0
             }
 
         with open(self.fpath(), 'w') as f:
