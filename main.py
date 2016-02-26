@@ -130,10 +130,11 @@ def login(id):
         # log to student model
         s = Student(id)
         s.create_action_login()
+        score = s.dict['score']
         s.sync()
 
         # return problems back to client
-        resp = jsonify({'status': 'ok'})
+        resp = jsonify({'status': 'ok', 'score': score})
         resp.status_code = 200
         return resp
 

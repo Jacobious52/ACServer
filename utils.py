@@ -17,15 +17,6 @@ def sanitize_id(id):
 def sanitize_fname(fname):
     return matches(FILE_PATTERN, fname)
 
-def encode_error(error, total_edit_dist):
-    '''
-    encode the hash with the edit distance
-    format:  editdist::hash
-    example: 18::5ffe2624f389d63bd81368029e59cba6
-    '''
-    h = hashlib.md5(error.encode()).hexdigest()
-    return '%d::%s' % (total_edit_dist, h)
-
 def edit_dist(s1, s2):
     '''calc the minimum edit distance between s1 and s2'''
     l1 = len(s1)
@@ -105,3 +96,28 @@ def matches(pattern, string):
 def matches(pattern, string):
     '''simple matches against a pre compiled pattern'''
     return pattern.match(string) is not None
+
+def encode_error(error, total_edit_dist):
+    '''
+    encode the hash with the edit distance
+    format:  editdist::hash
+    example: 18::5ffe2624f389d63bd81368029e59cba6
+    '''
+
+    # get the location part of the error
+    location = capture_matches(CLANG_ERROR_WARN_PATTERN, error)[0]
+    # remove it
+    unique_error = error.replace(location, '')
+
+    h = hashlib.md5(unique_error.encode()).hexdigest()
+    return '%d::%s' % (total_edit_dist, h)
+
+def compare_error_hash(a, b):
+    '''compare the error hash of 2 encoded hashes. excluding edit_dist'''
+    partsA = a.split('::')
+    partsB = b.split('::')
+
+    if len(partsA) == 2 and len(partsB) == 2:
+        return partsA[1] == partsB[1]
+    else:
+        return False

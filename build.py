@@ -121,8 +121,9 @@ def compile_files(files, id, problem_key):
     errors_dicts = []
 
     # compare these errors against students previous errors
+    hashes = Student(id).dict['hashes']
     for error in errors:
-        if utils.encode_error(error, total_edit_dist) not in Student(id).dict['hashes']:
+        if not any([utils.compare_error_hash(utils.encode_error(error, total_edit_dist), h) for h in hashes]):
             score += max(0, total_file_len - total_edit_dist)
             errors_dicts.append({'body': error, 'seen': False})
         else:
